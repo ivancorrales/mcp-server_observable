@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="69b239a3-6def-4a13-882c-e7d2b7243c7f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/seed.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/adapters/mcp/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/adapters/mcp/tools.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/adapters/sqlite_shop_repository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/client/agent.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/models/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/models/customer_summary.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/models/monthly_revenue.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/models/order.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/models/product_sales.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/ports.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/ports/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/domain/ports/shop_repository.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/main.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DBNavigator.Project.Workspace.Settings">
+    <assistant-settings>
+      <credential-settings>
+        <credentials />
+      </credential-settings>
+      <profile-settings>
+        <profiles />
+      </profile-settings>
+      <mcp-server-settings>
+        <workspace-integration value="false" />
+        <mcp-servers />
+        <mcp-tool-approvals />
+      </mcp-server-settings>
+    </assistant-settings>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3LqvZrRdVqtyiQKjVqIrKdoZtTH" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.jshint": "true",
+    "node.js.selected.package.jshint": "",
+    "nodejs_package_manager_path": "npm"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/mcp_observable/domain/models" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-73a66231627c-5bd6d13a2a75-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-262.10968.92" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="69b239a3-6def-4a13-882c-e7d2b7243c7f" name="Changes" comment="" />
+      <created>1794194470713</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1794194470713</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

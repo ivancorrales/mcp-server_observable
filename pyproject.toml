@@ -1,0 +1,29 @@
+[project]
+name = 'mcp-observable'
+version = '0.1.0'
+readme = "README.md"
+authors = [
+    { name = "Iván", email = "ivan.corrales.solera@gmail.com" }
+]
+requires-python = '>=3.11'
+dependencies = [
+  'mcp[cli]',
+  'opentelemetry-sdk',
+  'opentelemetry-exporter-otlp',
+  'uvicorn',
+  'starlette',
+  'httpx',
+  'sqlglot',
+  "fastmcp>=4.1.6",
+  "ruff>=0.17.4",
+]
+
+[project.optional-dependencies]
+dev = ['pytest']
+
+[build-system]
+requires = ['setuptools']
+build-backend = 'setuptools.build_meta'
+
+[tool.setuptools.packages.find]
+where = ['src']
