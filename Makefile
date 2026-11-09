@@ -45,3 +45,7 @@ clean: ## Limpia archivos temporales y entornos virtuales
 	@echo "🧹 Limpiando temporales..."
 	$(RM) .venv .pytest_cache .ruff_cache
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+
+infra-up: ## Levanta infrastructura necesaria
+	@echo "🧹 Levantando infrastructura..."
+	docker compose -f infra/docker-compose.yml up -d
