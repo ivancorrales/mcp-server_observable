@@ -33,6 +33,10 @@ try: ## Ejecuta el cliente de prueba local
 	@echo "🔌 Ejecutando cliente de prueba..."
 	uv run python scripts/try_client.py
 
+dashboard: ## Crea dashboard de grafana
+	@echo "🔌 Creando dashboards en grafana..."
+	uv run python scripts/make_dashboard.py
+
 seed: ## Alimenta la base de datos
 	@echo "🔌 Ejecutando seed..."
 	uv run python scripts/seed.py
