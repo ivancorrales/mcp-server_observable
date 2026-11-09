@@ -2,9 +2,11 @@ import functools
 import inspect
 import logging
 import time
-
 from contextlib import contextmanager
+from opentelemetry import trace
+from opentelemetry.trace import Status, StatusCode
 
+tracer = trace.get_tracer("mcp_observable")
 
 log = logging.getLogger("mcp_observable.tools")
 
@@ -18,19 +20,37 @@ def _observe(tool: str):
         "status": "ok",
     }
 
-    try:
-        yield
+    with tracer.start_as_current_span(
+        f"mcp.tool.{tool}"
+    ) as span:
 
-    except Exception as exc:
-        fields["status"] = "error"
-        fields["error_type"] = type(exc).__name__
-        raise
-    finally:
-        fields["duration_ms"] = round(
-            (time.perf_counter() - start) * 1000,
-            2,
-        )
-        log.info("tool_call", extra={"fields": fields})
+        span.set_attribute("mcp.tool.name", tool)
+
+        try:
+            yield
+
+        except Exception as exc:
+            fields["status"] = "error"
+            fields["error_type"] = type(exc).__name__
+
+            span.record_exception(exc)
+            span.set_status(
+                Status(StatusCode.ERROR)
+            )
+
+            raise
+
+        finally:
+            duration_ms = (
+                time.perf_counter() - start
+            ) * 1000
+
+            fields["duration_ms"] = round(duration_ms, 2)
+
+            log.info(
+                "tool_call",
+                extra={"fields": fields},
+            )
 
 
 def observed_tool(name: str | None = None):
@@ -55,3 +75,4 @@ def observed_tool(name: str | None = None):
         return wrapper
 
     return decorator
+

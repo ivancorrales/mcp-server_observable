@@ -2,7 +2,7 @@ import json
 import logging
 import sys
 from datetime import datetime, timezone
-
+from opentelemetry import trace
 
 class JsonFormatter(logging.Formatter):
 
@@ -14,6 +14,16 @@ class JsonFormatter(logging.Formatter):
             "level": record.levelname,
             "event": record.getMessage(),
         }
+        context = trace.get_current_span().get_span_context()
+
+        payload["trace_id"] = (
+            format(context.trace_id, "032x")
+            if context.is_valid else None
+        )
+        payload["span_id"] = (
+            format(context.span_id, "016x")
+            if context.is_valid else None
+        )
 
         payload.update(getattr(record, "fields", {}))
 

@@ -5,13 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69b239a3-6def-4a13-882c-e7d2b7243c7f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/mcp_observable/observability/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/mcp_observable/observability/decorators.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/mcp_observable/observability/logs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_structured_logs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/observability/telemetry.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/mcp_observable/adapters/mcp_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/adapters/mcp_tools.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mcp_observable/client/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/client/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mcp_observable/observability/decorators.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/observability/decorators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mcp_observable/observability/logs.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/observability/logs.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mcp_observable/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +57,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "structured-logs",
+    "git-widget-placeholder": "opentelemetry",
     "node.js.detected.package.jshint": "true",
     "node.js.selected.package.jshint": "",
     "nodejs_package_manager_path": "npm"
