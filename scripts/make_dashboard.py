@@ -123,6 +123,43 @@ panels = [
     ),
 ]
 
+LLM_DURATION = "llm_call_duration_milliseconds_bucket"
+
+panels.extend([
+    panel(
+        7,
+        "Coste estimado última hora (USD)",
+        "sum(increase(llm_cost_usd_total[1h]))",
+        kind="stat",
+        x=0,
+        y=20,
+        width=8,
+        height=4,
+        unit="currencyUSD",
+        legend="coste",
+    ),
+    panel(
+        8,
+        "Tokens por segundo",
+        "sum by (type) (rate(llm_tokens_total[5m]))",
+        x=0,
+        y=24,
+        legend="{{type}}",
+    ),
+    panel(
+        9,
+        "Latencia p95 del LLM",
+        (
+            "histogram_quantile(0.95, "
+            f"sum by (le, model) (rate({LLM_DURATION}[5m])))"
+        ),
+        x=12,
+        y=24,
+        unit="ms",
+        legend="{{model}}",
+    ),
+])
+
 dashboard = {
     "uid": "mcp-overview",
     "title": "MCP - Observabilidad",

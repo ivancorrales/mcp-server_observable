@@ -6,15 +6,34 @@ from dataclasses import dataclass, field
 import httpx2
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
-from opentelemetry import propagate, trace
+from opentelemetry import propagate, trace, metrics
 
 from mcp_observable.observability.telemetry import (
     setup_telemetry,
 )
 
+
+
 setup_telemetry("agent")
 
 tracer = trace.get_tracer("agent")
+meter = metrics.get_meter("agent")
+
+tokens_counter = meter.create_counter(
+    "llm_tokens",
+    description="Tokens consumidos por el LLM",
+)
+
+cost_counter = meter.create_counter(
+    "llm_cost_usd",
+    description="Coste estimado en USD",
+)
+
+llm_latency = meter.create_histogram(
+    "llm_call_duration",
+    unit="ms",
+    description="Duración de llamadas al LLM",
+)
 
 OLLAMA = os.getenv("OLLAMA_URL", "http://localhost:11434")
 MODEL = os.getenv("OLLAMA_MODEL", "llama3.1")
@@ -47,22 +66,66 @@ async def chat(
 ) -> dict:
 
     with tracer.start_as_current_span("llm.call") as span:
-        response = await http.post(
-            f"{OLLAMA}/api/chat",
-            json={
-                "model": MODEL,
-                "messages": messages,
-                "tools": tools,
-                "stream": False,
-            },
-        )
+        start = time.perf_counter()
+        try:
+            response = await http.post(
+                f"{OLLAMA}/api/chat",
+                json={
+                    "model": MODEL,
+                    "messages": messages,
+                    "tools": tools,
+                    "stream": False,
+                },
+            )
 
-        response.raise_for_status()
-        data = response.json()
+            response.raise_for_status()
+            data = response.json()
 
-        span.set_attribute("llm.model", MODEL)
+            # Tokens reportados por Ollama
+            tokens_in = data.get("prompt_eval_count", 0)
+            tokens_out = data.get("eval_count", 0)
 
-        return data["message"]
+            # Coste simulado de proveedor cloud
+            estimated_cost = (
+                    tokens_in / 1_000_000 * PRICE_IN
+                    + tokens_out / 1_000_000 * PRICE_OUT
+            )
+
+            # Métricas de consumo
+            tokens_counter.add(
+                tokens_in,
+                {"model": MODEL, "type": "input"},
+            )
+
+            tokens_counter.add(
+                tokens_out,
+                {"model": MODEL, "type": "output"},
+            )
+
+            cost_counter.add(
+                estimated_cost,
+                {"model": MODEL},
+            )
+
+            # Acumulamos estadísticas de la ejecución
+            result.tokens_in += tokens_in
+            result.tokens_out += tokens_out
+            result.cost_usd += estimated_cost
+
+            # Atributos del span
+            span.set_attribute("llm.model", MODEL)
+            span.set_attribute("llm.tokens.input", tokens_in)
+            span.set_attribute("llm.tokens.output", tokens_out)
+            span.set_attribute("llm.cost_usd", estimated_cost)
+
+            return data["message"]
+        finally:
+            duration_ms = (time.perf_counter() - start) * 1000
+
+            llm_latency.record(
+                duration_ms,
+                {"model": MODEL},
+            )
 
 
 async def run(question: str) -> RunResult:
@@ -131,10 +194,10 @@ def main():
         f"herramientas={r.tools_called} tokens={r.tokens_in}+{r.tokens_out} "
         f"coste=${r.cost_usd:.5f} tiempo={r.seconds:.1f}s"
     )
-    """
+
     r = asyncio.run(run("Muéstrame el resumen del cliente con id 9999"))
     print(r.answer)
-    """
+
 
 
 if __name__ == "__main__":
