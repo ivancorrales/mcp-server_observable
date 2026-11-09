@@ -8,7 +8,7 @@ from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 
 OLLAMA = os.getenv("OLLAMA_URL", "http://localhost:11434")
-MODEL = os.getenv("OLLAMA_MODEL", "qwen3:8b")
+MODEL = os.getenv("OLLAMA_MODEL", "llama3.1")
 MCP_URL = os.getenv("MCP_URL", "http://localhost:8000/mcp")
 
 # Precio de referencia en USD por millón de tokens, como si fuera un proveedor cloud

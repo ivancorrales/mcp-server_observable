@@ -21,3 +21,4 @@ data/
 
 # Modelos descargados y cachés
 .cache/
+.idea
