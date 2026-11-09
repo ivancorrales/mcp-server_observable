@@ -1,10 +1,23 @@
-# Python-generated files
+# Python
+.venv/
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+.pytest_cache/
+.ruff_cache/
+*.pyc
 
-# Virtual environments
-.venv
+# Configuración privada
+.env
+.env.*
+!.env.example
+
+# Datos locales
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# macOS
+.DS_Store
+
+# Modelos descargados y cachés
+.cache/

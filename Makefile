@@ -1,4 +1,4 @@
-.PHONY: help install dev run test lint format clean
+.PHONY: help setup  run test lint format clean
 
 RM = rm -rf
 ifeq ($(OS),Windows_NT)
@@ -8,18 +8,18 @@ endif
 help: ## Muestra este mensaje de ayuda
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-install: ## Instala uv y todas las dependencias del proyecto
+setup: ## Instala uv y todas las dependencias del proyecto
 	@echo "📦 Instalando dependencias con uv..."
 	@command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh | sh
 	uv sync
 
-dev: ## Arranca el servidor FastMCP en modo desarrollo (Con interfaz web Inspector)
-	@echo "🚀 Iniciando servidor FastMCP en modo desarrollo..."
-	uv run fastmcp dev src/mcp_observable/main.py
-
 run: ## Arranca el servidor FastMCP en modo producción (STDIO para Clientes IA)
 	@echo "🔌 Servidor FastMCP listo para conexión..."
-	uv run python src/mcp_observable/main.py
+	uv run mcp-server
+
+agent: ## Arranca el agente
+	@echo "🔌 Running agent..."
+	uv run agent
 
 test: ## Ejecuta los tests unitarios
 	@echo "🧪 Ejecutando pruebas con pytest..."
@@ -28,6 +28,14 @@ test: ## Ejecuta los tests unitarios
 lint: ## Revisa la calidad del código
 	@echo "🔍 Analizando código con ruff..."
 	uv run ruff check --fix src/ tests/
+
+try: ## Ejecuta el cliente de prueba local
+	@echo "🔌 Ejecutando cliente de prueba..."
+	uv run python scripts/try_client.py
+
+seed: ## Alimenta la base de datos
+	@echo "🔌 Ejecutando seed..."
+	uv run python scripts/seed.py
 
 format: ## Formatea el código automáticamente
 	@echo "✨ Formateando código con ruff..."
