@@ -7,7 +7,14 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
-
+from opentelemetry import metrics
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+    OTLPMetricExporter,
+)
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import (
+    PeriodicExportingMetricReader,
+)
 
 def setup_telemetry(service_name: str) -> None:
     endpoint = os.getenv(
@@ -31,3 +38,18 @@ def setup_telemetry(service_name: str) -> None:
     )
 
     trace.set_tracer_provider(provider)
+
+    reader = PeriodicExportingMetricReader(
+        OTLPMetricExporter(
+            endpoint=endpoint,
+            insecure=True,
+        ),
+        export_interval_millis=5000,
+    )
+
+    metrics.set_meter_provider(
+        MeterProvider(
+            resource=resource,
+            metric_readers=[reader],
+        )
+    )

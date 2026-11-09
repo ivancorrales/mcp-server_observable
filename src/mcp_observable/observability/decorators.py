@@ -5,10 +5,28 @@ import time
 from contextlib import contextmanager
 from opentelemetry import trace
 from opentelemetry.trace import Status, StatusCode
+from opentelemetry import metrics
 
 tracer = trace.get_tracer("mcp_observable")
-
 log = logging.getLogger("mcp_observable.tools")
+
+meter = metrics.get_meter("mcp_observable")
+
+calls = meter.create_counter(
+    "mcp_tool_calls",
+    description="Llamadas a herramientas MCP",
+)
+
+errors = meter.create_counter(
+    "mcp_tool_errors",
+    description="Errores en herramientas MCP",
+)
+
+latency = meter.create_histogram(
+    "mcp_tool_duration",
+    unit="ms",
+    description="Duración de las herramientas",
+)
 
 
 @contextmanager
@@ -37,7 +55,13 @@ def _observe(tool: str):
             span.set_status(
                 Status(StatusCode.ERROR)
             )
-
+            errors.add(
+                1,
+                {
+                    "tool": tool,
+                    "error_type": type(exc).__name__,
+                },
+            )
             raise
 
         finally:
@@ -46,7 +70,13 @@ def _observe(tool: str):
             ) * 1000
 
             fields["duration_ms"] = round(duration_ms, 2)
+            attributes = {
+                "tool": tool,
+                "status": fields["status"],
+            }
 
+            calls.add(1, attributes)
+            latency.record(duration_ms, attributes)
             log.info(
                 "tool_call",
                 extra={"fields": fields},
