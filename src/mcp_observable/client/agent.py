@@ -95,8 +95,10 @@ def main():
         f"herramientas={r.tools_called} tokens={r.tokens_in}+{r.tokens_out} "
         f"coste=${r.cost_usd:.5f} tiempo={r.seconds:.1f}s"
     )
+    """
     r = asyncio.run(run("Muéstrame el resumen del cliente con id 9999"))
     print(r.answer)
+    """
 
 
 if __name__ == "__main__":

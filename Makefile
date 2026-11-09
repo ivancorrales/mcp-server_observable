@@ -49,3 +49,7 @@ clean: ## Limpia archivos temporales y entornos virtuales
 infra-up: ## Levanta infrastructura necesaria
 	@echo "🧹 Levantando infrastructura..."
 	docker compose -f infra/docker-compose.yml up -d
+
+infra-down: ## Detiene infrastructura
+	@echo "🧹 Deteniendo infrastructura..."
+	docker compose -f infra/docker-compose.yml down
