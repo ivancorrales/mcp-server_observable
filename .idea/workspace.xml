@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69b239a3-6def-4a13-882c-e7d2b7243c7f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/infra/grafana/provisioning/dashboards/dashboards.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/infra/grafana/provisioning/datasources/prometheus.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/make_dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/infra/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/infra/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/mcp_observable/observability/propagation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mcp_observable/adapters/mcp_tools.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/adapters/mcp_tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mcp_observable/client/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/client/agent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mcp_observable/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mcp_observable/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +56,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "grafana",
+    "git-widget-placeholder": "tokens-latency-costs",
     "node.js.detected.package.jshint": "true",
     "node.js.selected.package.jshint": "",
     "nodejs_package_manager_path": "npm"

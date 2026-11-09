@@ -3,9 +3,18 @@ import os
 import time
 from dataclasses import dataclass, field
 
-import httpx
+import httpx2
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
+from opentelemetry import propagate, trace
+
+from mcp_observable.observability.telemetry import (
+    setup_telemetry,
+)
+
+setup_telemetry("agent")
+
+tracer = trace.get_tracer("agent")
 
 OLLAMA = os.getenv("OLLAMA_URL", "http://localhost:11434")
 MODEL = os.getenv("OLLAMA_MODEL", "llama3.1")
@@ -30,61 +39,88 @@ class RunResult:
     seconds: float = 0.0
 
 
-async def chat(http: httpx.AsyncClient, messages: list, tools: list, result: RunResult) -> dict:
-    resp = await http.post(
-        f"{OLLAMA}/api/chat",
-        json={"model": MODEL, "messages": messages, "tools": tools, "stream": False},
-    )
-    resp.raise_for_status()
-    data = resp.json()
-    tok_in = data.get("prompt_eval_count", 0)
-    tok_out = data.get("eval_count", 0)
-    result.tokens_in += tok_in
-    result.tokens_out += tok_out
-    result.cost_usd += tok_in / 1e6 * PRICE_IN + tok_out / 1e6 * PRICE_OUT
-    return data["message"]
+async def chat(
+    http: httpx2.AsyncClient,
+    messages: list,
+    tools: list,
+    result: RunResult,
+) -> dict:
+
+    with tracer.start_as_current_span("llm.call") as span:
+        response = await http.post(
+            f"{OLLAMA}/api/chat",
+            json={
+                "model": MODEL,
+                "messages": messages,
+                "tools": tools,
+                "stream": False,
+            },
+        )
+
+        response.raise_for_status()
+        data = response.json()
+
+        span.set_attribute("llm.model", MODEL)
+
+        return data["message"]
 
 
 async def run(question: str) -> RunResult:
     result = RunResult()
     start = time.perf_counter()
-    async with (
-        httpx.AsyncClient(timeout=120) as http,
-        streamable_http_client(MCP_URL) as (read, write),
-        ClientSession(read, write) as session,
-    ):
-        await session.initialize()
-        listed = await session.list_tools()
-        tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": t.name,
-                    "description": t.description or "",
-                    "parameters": t.input_schema,
-                },
-            }
-            for t in listed.tools
-        ]
-        messages = [
-            {"role": "system", "content": SYSTEM},
-            {"role": "user", "content": question},
-        ]
-        for _ in range(6): 
-            msg = await chat(http, messages, tools, result)
-            messages.append(msg)
-            tool_calls = msg.get("tool_calls") or []
-            if not tool_calls:
-                result.answer = msg.get("content", "")
-                break
-            for call in tool_calls:
-                fn = call["function"]
-                result.tools_called.append(fn["name"])
-                res = await session.call_tool(fn["name"], fn["arguments"])
-                text = "".join(b.text for b in res.content if b.type == "text")
-                messages.append({"role": "tool", "tool_name": fn["name"], "content": text})
-        else:
-            result.answer = "Límite de iteraciones alcanzado"
+
+    # Span raíz de toda la ejecución del agente
+    with tracer.start_as_current_span("agent.run") as span:
+
+        # Propagamos el contexto activo al servidor MCP
+        headers: dict[str, str] = {}
+        propagate.inject(headers)
+
+        async with (
+            httpx2.AsyncClient(timeout=120) as http,
+            httpx2.AsyncClient(
+                headers=headers,
+                timeout=httpx2.Timeout(30.0, read=300.0),
+            ) as mcp_http,
+            streamable_http_client(
+                MCP_URL,
+                http_client=mcp_http,
+            ) as (read, write),
+            ClientSession(read, write) as session,
+        ):
+            await session.initialize()
+            listed = await session.list_tools()
+            tools = [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": t.name,
+                        "description": t.description or "",
+                        "parameters": t.input_schema,
+                    },
+                }
+                for t in listed.tools
+            ]
+            messages = [
+                {"role": "system", "content": SYSTEM},
+                {"role": "user", "content": question},
+            ]
+            for _ in range(6):
+                msg = await chat(http, messages, tools, result)
+                messages.append(msg)
+                tool_calls = msg.get("tool_calls") or []
+                if not tool_calls:
+                    result.answer = msg.get("content", "")
+                    break
+                for call in tool_calls:
+                    fn = call["function"]
+                    result.tools_called.append(fn["name"])
+                    res = await session.call_tool(fn["name"], fn["arguments"])
+                    text = "".join(b.text for b in res.content if b.type == "text")
+                    messages.append({"role": "tool", "tool_name": fn["name"], "content": text})
+            else:
+                result.answer = "Límite de iteraciones alcanzado"
+
     result.seconds = time.perf_counter() - start
     return result
 

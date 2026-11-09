@@ -8,7 +8,9 @@ from mcp_observable.adapters.sqlite_shop_repository import SqliteShopRepository
 from mcp_observable.observability.decorators import observed_tool
 
 repo = SqliteShopRepository(os.getenv("DB_PATH", "data/shop.db"))
-mcp = FastMCP("shopdata-mcp")
+mcp = FastMCP(
+    "shopdata-mcp",
+)
 
 Status = Literal["paid", "shipped", "delivered", "cancelled", "refunded"]
 Category = Literal["portatiles", "perifericos", "redes", "almacenamiento", "audio"]
