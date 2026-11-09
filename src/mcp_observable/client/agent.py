@@ -70,7 +70,7 @@ async def run(question: str) -> RunResult:
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": question},
         ]
-        for _ in range(6):  # tope de vueltas para que un modelo despistado no itere sin fin
+        for _ in range(6): 
             msg = await chat(http, messages, tools, result)
             messages.append(msg)
             tool_calls = msg.get("tool_calls") or []
@@ -88,8 +88,6 @@ async def run(question: str) -> RunResult:
     result.seconds = time.perf_counter() - start
     return result
 
-
-# 🌟 CORRECCIÓN: Función main requerida por tu project.scripts
 def main():
     r = asyncio.run(run("¿Cuáles son los 3 productos que más facturan?"))
     print(r.answer)
@@ -97,6 +95,8 @@ def main():
         f"herramientas={r.tools_called} tokens={r.tokens_in}+{r.tokens_out} "
         f"coste=${r.cost_usd:.5f} tiempo={r.seconds:.1f}s"
     )
+    r = asyncio.run(run("Muéstrame el resumen del cliente con id 9999"))
+    print(r.answer)
 
 
 if __name__ == "__main__":

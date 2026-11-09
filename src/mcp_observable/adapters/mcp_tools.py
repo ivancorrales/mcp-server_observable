@@ -5,6 +5,7 @@ from typing import Literal
 from fastmcp import FastMCP
 
 from mcp_observable.adapters.sqlite_shop_repository import SqliteShopRepository
+from mcp_observable.observability.decorators import observed_tool
 
 repo = SqliteShopRepository(os.getenv("DB_PATH", "data/shop.db"))
 mcp = FastMCP("shopdata-mcp")
@@ -14,6 +15,7 @@ Category = Literal["portatiles", "perifericos", "redes", "almacenamiento", "audi
 
 
 @mcp.tool()
+@observed_tool()
 def search_orders(
     min_total: float = 0.0,
     status: Status | None = None,
@@ -26,6 +28,7 @@ def search_orders(
 
 
 @mcp.tool()
+@observed_tool()
 def customer_summary(customer_id: int) -> dict:
     """Resumen de un cliente: país, segmento, número de pedidos y valor total."""
     summary = repo.customer_summary(customer_id)
@@ -35,6 +38,7 @@ def customer_summary(customer_id: int) -> dict:
 
 
 @mcp.tool()
+@observed_tool()
 def top_products(category: Category | None = None, limit: int = 5) -> list[dict]:
     """Productos que más facturan, opcionalmente de una categoría. Máximo 20."""
     limit = max(1, min(limit, 20))
@@ -42,6 +46,7 @@ def top_products(category: Category | None = None, limit: int = 5) -> list[dict]
 
 
 @mcp.tool()
+@observed_tool()
 def revenue_by_month(year: int = 2026) -> list[dict]:
     """Facturación mensual de un año (solo pedidos pagados, enviados o entregados)."""
     return [asdict(m) for m in repo.revenue_by_month(year)]
