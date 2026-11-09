@@ -53,3 +53,7 @@ def setup_telemetry(service_name: str) -> None:
             metric_readers=[reader],
         )
     )
+
+def flush_telemetry() -> None:
+    trace.get_tracer_provider().force_flush()
+    metrics.get_meter_provider().force_flush()

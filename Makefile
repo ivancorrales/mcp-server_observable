@@ -37,6 +37,10 @@ dashboard: ## Crea dashboard de grafana
 	@echo "🔌 Creando dashboards en grafana..."
 	uv run python scripts/make_dashboard.py
 
+traffic: ## Genera trafico
+	@echo "🔌 Generando trafico..."
+	uv run python scripts/load_test.py
+
 seed: ## Alimenta la base de datos
 	@echo "🔌 Ejecutando seed..."
 	uv run python scripts/seed.py
